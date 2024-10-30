@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ders Değerlendirmesi</title>
+    <style>
+        /* Стили для формы и отчета */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 50px;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            /* Обновлено: Добавлен синий бордер */
+            border: 2px solid #5988ff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 800px;
+            margin-bottom: 50px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            /* Обновлено: Цвет заголовка */
+            color: #5988ff;
+        }
+        h2 {
+            margin-top: 40px;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+            /* Обновлено: Цвет подзаголовка */
+            color: #5988ff;
+        }
+        .parameter {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            /* Обновлено: Цвет метки */
+            color: #5988ff;
+        }
+        input[type="range"] {
+            width: 100%;
+        }
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            /* Обновлено: Граница поля ввода */
+            border: 1px solid #5988ff;
+            border-radius: 5px;
+        }
+        span {
+            float: right;
+            font-weight: bold;
+            /* Обновлено: Цвет значения ползунка */
+            color: #5988ff;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #5988ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 30px;
+        }
+        button:hover {
+            background-color: #4a78d0;
+        }
+        ul {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            padding-left: 20px;
+        }
+        ul li {
+            margin-bottom: 5px;
+        }
+        /* Стили для отчета */
+        .info {
+            margin-bottom: 20px;
+            /* Обновлено: Фон информационного блока */
+            background-color: #d6ff6b;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .info p {
+            margin: 5px 0;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo img {
+            max-width: 200px;
+        }
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .summary-table th, .summary-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            vertical-align: middle;
+        }
+        .summary-table th {
+            /* Обновлено: Фон заголовков таблицы */
+            background-color: #5988ff;
+            color: white;
+        }
+        .summary-slider {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            margin-top: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            position: relative;
+        }
+        /* Стиль бегунка */
+        .summary-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            border: 2px solid #5988ff;
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+        }
+        .summary-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            border: 2px solid #5988ff;
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+        }
+        /* Цветовая заливка для слайдера */
+        .summary-slider.slider-low {
+            background: linear-gradient(to right, #ff6f61 0%, #ff6f61 var(--value), #f0f0f0 var(--value), #f0f0f0 100%);
+        }
+        .summary-slider.slider-medium {
+            background: linear-gradient(to right, #ffeb3b 0%, #ffeb3b var(--value), #f0f0f0 var(--value), #f0f0f0 100%);
+        }
+        .summary-slider.slider-high {
+            background: linear-gradient(to right, #81c784 0%, #81c784 var(--value), #f0f0f0 var(--value), #f0f0f0 100%);
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 40px;
+        }
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+        .table th {
+            /* Обновлено: Фон заголовков таблицы */
+            background-color: #5988ff;
+            color: white;
+        }
+        .progress-bar {
+            height: 20px;
+            border-radius: 5px;
+            background-color: #f0f0f0;
+            /* position: relative; */ /* Удалено */
+            margin-bottom: 5px;
+            overflow: hidden; /* Добавлено для предотвращения выхода заполнения за пределы */
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 5px;
+            /* position: absolute; */ /* Удалено */
+            width: 0%; /* Установлено по умолчанию */
+            transition: width 0.5s ease; /* Плавное изменение ширины */
+        }
+        .progress-fill.low {
+            background-color: #ff6f61;
+        }
+        .progress-fill.medium {
+            background-color: #ffeb3b;
+        }
+        .progress-fill.high {
+            background-color: #81c784;
+        }
+        .explanation {
+            margin-top: 30px;
+        }
+        .explanation h3 {
+            margin-bottom: 10px;
+            /* Обновлено: Цвет подзаголовков */
+            color: #5988ff;
+        }
+        .explanation p {
+            margin: 5px 0;
+        }
+
+        /* Медиазапросы для адаптивности */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                width: 95%;
+            }
+            .summary-slider {
+                height: 6px;
+            }
+            .progress-bar {
+                height: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ders Değerlendirmesi</h1>
+        <form id="evaluationForm">
+            <div class="parameter">
+                <label for="studentName">Öğrencinin Adı:</label>
+                <input type="text" id="studentName" name="studentName" required>
+            </div>
+            <div class="parameter">
+                <label for="studentAge">Öğrencinin Yaşı:</label>
+                <input type="number" id="studentAge" name="studentAge" min="1" required>
+            </div>
+
+            <!-- Приветствие и знакомство -->
+            <h2>Selamlama ve Tanıtım</h2>
+            <div class="parameter">
+                <label for="selfPresentation">Kendini Sunma Becerisi:</label>
+                <p>Öğrenci kendini ne kadar etkili şekilde tanıttı, düşüncelerini net bir şekilde ifade edip kişisel ilgi alanlarını ve hobilerini paylaştı mı?</p>
+                <input type="range" id="selfPresentation" name="selfPresentation" min="1" max="10" value="5">
+                <span id="selfPresentationValue">50%</span>
+            </div>
+
+            <!-- Оценка своих навыков -->
+            <h2>Beceri Öz Değerlendirmesi</h2>
+            <div class="parameter">
+                <label for="confidence">Özgüven:</label>
+                <p>Öğrenci bu ve önceki aşamalarda ne kadar özgüvenliydi?</p>
+                <input type="range" id="confidence" name="confidence" min="1" max="10" value="5">
+                <span id="confidenceValue">50%</span>
+            </div>
+
+            <!-- Двери с навыками -->
+            <h2>Beceri Kapıları</h2>
+            <div class="parameter">
+                <label for="observation">Gözlem:</label>
+                <p>Öğrencinin gözlem becerilerini nasıl değerlendirirsiniz: nitelikleri fark ettiler mi, görevler için uygun nitelikleri seçtiler mi ve olumsuz niteliklerin arkadaşlıklar üzerindeki etkisini anladılar mı?</p>
+                <input type="range" id="observation" name="observation" min="1" max="10" value="5">
+                <span id="observationValue">50%</span>
+            </div>
+            <div class="parameter">
+                <label for="listening">Başkalarını Dinleme:</label>
+                <p>Öğrencinin çatışmaları tartışırken dinleme ve anlama becerilerini nasıl değerlendirirsiniz: öğrenci dikkatli, empatik ve yanıtlarında başkalarının görüş ve duygularına özen gösterdi mi?</p>
+                <input type="range" id="listening" name="listening" min="1" max="10" value="5">
+                <span id="listeningValue">50%</span>
+            </div>
+            <div class="parameter">
+                <label for="adaptivity">Uyum Sağlama ve Yaratıcı Düşünme:</label>
+                <p>Problem çözmede öğrencinin uyum sağlama ve yaratıcı düşünme becerilerini nasıl değerlendirirsiniz: standart olmayan çözümler önerdiler mi, alternatif perspektifleri göz önünde bulundurdular mı ve farklı durumlara yanıtlarını uyarladılar mı?</p>
+                <input type="range" id="adaptivity" name="adaptivity" min="1" max="10" value="5">
+                <span id="adaptivityValue">50%</span>
+            </div>
+
+            <!-- Повторная самооценка навыков -->
+            <h2>Becerilerin Öz Değerlendirmesinin Tekrarı</h2>
+            <div class="parameter">
+                <label for="activity">Aktivite:</label>
+                <p>Öğrencinin tekrarlı öz değerlendirme ve derste gösterdiği aktiviteyi nasıl değerlendirirsiniz: değişiklikleri tartışmaya katıldılar mı, inisiyatif aldılar mı ve ilerleme veya zorlukların belirli alanlarını not ettiler mi?</p>
+                <input type="range" id="activity" name="activity" min="1" max="10" value="5">
+                <span id="activityValue">50%</span>
+            </div>
+
+            <!-- Кнопка "Готово" -->
+            <button type="button" id="submitButton">Tamamlandı</button>
+        </form>
+    </div>
+
+    <!-- script.js -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Определяем данные по навыкам
+            const skillData = {
+                "Kendini Sunma Becerisi": {
+                    explanations: {
+                        low: "Çocuk şu anda kendisi hakkında güvenle konuşmakta zorlanıyor, utangaç hissedebilir ve güçlü yönlerini küçümseyebilir. Bu beceriyi rahat hissetmesi için desteğe ihtiyaçları var.",
+                        medium: "Çocuk kendisi hakkında konuşabiliyor ancak her zaman güvenle veya yapılandırılmış bir şekilde yapmıyor. Bazen tüm güçlü yönlerini ortaya koymuyor ve daha fazla ilerleme için desteğe ihtiyaç duyuyor.",
+                        high: "Çocuk kendisi hakkında güvenle konuşuyor, ilgi alanlarını ve başarılarını yapılandırılmış bir şekilde tanımlıyor, iyi kendini sunma becerileri gösteriyor."
+                    },
+                    homeTraining: {
+                        low: "Çocuğun kendisi hakkında konuşmasına yardımcı olun, \"Günün nasıl geçti?\" veya \"Bugün en çok neyi sevdin?\" gibi basit sorularla başlayın. Çocuğun en sevdiği etkinlikleri paylaştığı kısa videolar veya ses kayıtları oluşturun, bu da özgüvenlerini artırır.",
+                        medium: "Çocuğun kendisini ve ilgi alanlarını daha detaylı tanımlamasını teşvik edin. Onların rahatça konuşabilmeleri için birkaç olumlu nitelik ve başarı listesini önermeyi düşünün.",
+                        high: "Çocuğun küçük bir \"başarı günlüğü\" tutmasını veya hobileri hakkında videolar kaydetmesini teşvik edin. Bu, özgüvenini artırır ve güçlü yönleri hakkında konuşma alışkanlığı geliştirmesine yardımcı olur."
+                    },
+                    schoolOffering: "Çocuğun mini sunumlar, rol yapma ve öğretmenden geri bildirim alma yoluyla kendisi hakkında konuşmayı öğrenebileceği güvenli bir alan yaratıyoruz. Oturumlarımız, çocuğun düşüncelerini yapılandırdığı egzersizler içerir ve bu, özgüven ile kendini sunma becerilerinin geliştirilmesine yardımcı olur."
+                },
+                "Özgüven": {
+                    explanations: {
+                        low: "Çocuk, özellikle yeni durumlarda veya fikirlerini ifade ederken önemli özgüven sorunları yaşıyor. Ek desteğe ihtiyacı var.",
+                        medium: "Çocuk belli bir özgüven gösteriyor ancak yeni dinleyicilerle karşılaştığında garip hissedebilir ve fikirlerini ifade etmekte tereddüt edebilir.",
+                        high: "Çocuk özgüvenli, başkalarıyla kolayca etkileşim kuruyor ve çeşitli durumlarda düşüncelerini ve fikirlerini paylaşıyor."
+                    },
+                    homeTraining: {
+                        low: "Çocuğu yeni girişimlerde cesaretlendirin, fikirlerini tartışın ve olumlu geri bildirim verin. \"Görevler\" oluşturun — örneğin, çocuğun bir satış görevlisine yaklaşmasını veya aile üyelerine kendini tanıtmasını isteyin.",
+                        medium: "Aile üyeleri veya arkadaşlara kendini tanıttığı mini sunumlar veya oyunlar pratiği yaparak özgüvenini kademeli olarak artırın.",
+                        high: "Çocuktan aile toplantılarında fikirlerini sunmasını veya ortak konular hakkında konuşmasını isteyerek, farklı senaryolarda kendini güvenle ifade etme yeteneğini güçlendirin."
+                    },
+                    schoolOffering: "Grup ve bireysel görevler aracılığıyla çocuğun özgüvenini geliştiriyor, fikirlerini açıkça ifade etme koşulları oluşturuyoruz. Çocuklar, fikirlerini paylaşma ve tartışmalara katılma fırsatına sahip olur; bu da onların grup içinde kendilerini güvende hissetmelerine ve kendilerini ifade etmekten korkmamalarına yardımcı olur."
+                },
+                "Gözlem": {
+                    explanations: {
+                        low: "Çocuk detayları fark etmiyor, genellikle önemli unsurları kaçırıyor, bu da çevresini anlama yeteneklerini etkileyebilir.",
+                        medium: "Çocuk bazı detayları fark ediyor ancak bazen önemli noktaları kaçırıyor. Bu beceri için daha fazla pratiğe ihtiyaç var.",
+                        high: "Çocuk detayları ve incelikleri iyi fark ediyor ve çevresindeki önemli unsurlara hızlıca dikkat edebiliyor."
+                    },
+                    homeTraining: {
+                        low: "\"Farkları Bul\" gibi dikkat oyunları oynayın veya birlikte resimleri analiz edin. Onlardan 5 fark bulmalarını veya çevredeki değişiklikleri fark etmelerini isteyin.",
+                        medium: "Kitapta, filmde veya resimde ne olduğunu gibi detayları daha sık tartışın. Çocuktan olayların sırasını hatırlamasını veya bir sahneyi tanımlamasını isteyin.",
+                        high: "Çocuğun çeşitli durumlarda detayları analiz etme ilgisini destekleyin. Tanımlamaya dayalı bir nesneyi tahmin etme veya olayları karşılaştırma gibi dikkat gerektiren görevler sunun."
+                    },
+                    schoolOffering: "Detaylara dikkat gerektiren ve çevresel bilgilerin analizini içeren görevler aracılığıyla gözlem becerilerini teşvik ediyoruz. Uygulamalı ödevler, görsellerle çalışma ve tartışmalar, çocukların önemli detayları fark etmeyi ve bilgileri daha kapsamlı algılamayı öğrenmelerine yardımcı olur."
+                },
+                "Başkalarını Dinleme": {
+                    explanations: {
+                        low: "Çocuk aktif dinleme konusunda zorlanıyor, sık sık söz kesiyor ve bu da konuşmacının tam olarak anlaşılmasını engelliyor.",
+                        medium: "Çocuk dinleyebiliyor ancak bazen dikkati dağılıyor veya söz kesiyor, bu da iletişimi etkiliyor.",
+                        high: "Çocuk dikkatle dinliyor, söz kesmiyor, konuşmacıya saygı gösteriyor ve iyi iletişim becerileri sergiliyor."
+                    },
+                    homeTraining: {
+                        low: "\"Telefon\" gibi mesajı doğru bir şekilde iletmek gereken aktif dinleme oyunlarına katılın veya duyduklarını tekrarlamalarını gerektiren basit sorular sorun.",
+                        medium: "Çocuktan söz kesmeden dinlemesini ve ardından ana noktaları yeniden anlatmasını isteyin. Bu, sabır ve dikkat öğretir.",
+                        high: "Çocukla ilginç konuları tartışın, dinleme ve anlama becerilerini geliştirmelerine yardımcı olmak için açıklayıcı sorular sorun."
+                    },
+                    schoolOffering: "Oturumlarımızda her çocuğun kendi bakış açısını paylaşabileceği ve aktif dinlemeyi öğrenebileceği tartışmalar düzenliyoruz. Dinleme becerilerini geliştirmek için oyunlar ve egzersizler kullanıyoruz; bu, çocukların başkalarını daha iyi anlamalarına ve saygılı diyaloga katılmalarına yardımcı olur."
+                },
+                "Uyum Sağlama ve Yaratıcı Düşünme": {
+                    explanations: {
+                        low: "Çocuk yeni görev veya durumlara uyum sağlamakta zorlanıyor ve tanıdık çözümlere bağlı kalmayı tercih ediyor.",
+                        medium: "Çocuk bir konuya olan yaklaşımını değiştirmeye çalışıyor ancak bazen yaratıcılık veya uyum gerektiren durumlarda zorlanıyor.",
+                        high: "Çocuk değişikliklere kolayca uyum sağlıyor, yeni çözümler arıyor ve çeşitli durumlarda yaratıcı düşünme gösteriyor."
+                    },
+                    homeTraining: {
+                        low: "Strateji değişiklikleri gerektiren oyunlara çocuğu dahil edin. Benzersiz cevaplar bulmayı gerektiren sorular sorun veya problemlere farklı yaklaşımları tartışın.",
+                        medium: "Yaratıcı düşünmeyi gerektiren bulmacalar gibi alternatif çözümler gerektiren görevler sunun.",
+                        high: "Çocuğa esneklik gerektiren görevler verin, benzersiz fikirleri tartışarak ve yeni çözümler keşfederek yaratıcı düşünmeye ilgi göstermelerini teşvik edin."
+                    },
+                    schoolOffering: "Düşünce esnekliğini ve yaratıcılığı teşvik ediyor, çocukları standart olmayan çözümler gerektiren proje görevlerine dahil ediyoruz. Bu görevler, farklı yaklaşımlar gerektiren grup çalışmaları olabilir ve çocuğun uyum sağlamasına ve yaratıcı bir yaklaşım geliştirmesine olanak tanır."
+                },
+                "Aktivite": {
+                    explanations: {
+                        low: "Çocuk düşük seviyede aktiflik gösteriyor, nadiren görevlerle ilgileniyor ve sürekli motivasyona ihtiyaç duyuyor.",
+                        medium: "Çocuk aktivite gösteriyor ancak her zaman tutarlı değil, bazen çalışmaya devam etmek için hatırlatmalara ihtiyaç duyuyor.",
+                        high: "Çocuk görevlere aktif olarak katılıyor, kolayca inisiyatif alıyor ve sık sık heyecan gösteriyor."
+                    },
+                    homeTraining: {
+                        low: "Çocuğu el işleri, masa oyunları veya basit ev işlerine gibi eğlenceli, aktif görevlerle meşgul etmeyi deneyin. Onları inisiyatif almaya teşvik edin.",
+                        medium: "Çocuğun ilgisini çeken etkinlikleri veya görevleri seçmesine izin vererek inisiyatif almasını teşvik edin. Onlarla süreçte rehberlik ettiği bir \"lider\" oyunu oynayabilirsiniz.",
+                        high: "Çocuğun bağımsız projelere ilgisini teşvik edin — mini bir görev, deney veya aile etkinliği düzenlemek gibi küçük projeler oluşturmasını ve yürütmesini önerin."
+                    },
+                    schoolOffering: "Okulumuzda, oyun tabanlı görevler, rol yapma durumları ve projeler aracılığıyla aktif katılımı, inisiyatifi ve bağımsızlığı teşvik ediyoruz. Çocuklar kendilerini ifade etmeyi, sorumluluk almayı ve öğrenme sürecine aktif olarak katılmayı öğrenirler."
+                }
+            };
+
+            // Обработчик для ползунков
+            const sliders = document.querySelectorAll("input[type='range']");
+            sliders.forEach(slider => {
+                slider.addEventListener("input", function () {
+                    const percentage = slider.value * 10;
+                    document.getElementById(slider.id + "Value").textContent = percentage + "%";
+                });
+            });
+
+            // Обработчик для кнопки "Готово"
+            document.getElementById("submitButton").addEventListener("click", function () {
+                const studentName = document.getElementById("studentName").value.trim();
+                const studentAge = document.getElementById("studentAge").value.trim();
+                const currentDate = new Date().toLocaleDateString();
+
+                // Проверка заполнения полей
+                if (!studentName || !studentAge) {
+                    alert("Please fill in all fields. studentName and studentAge");
+                    return;
+                }
+
+                // Собираем результаты
+                const results = {
+                    "Öğrencinin Adı": studentName,
+                    "Öğrencinin Yaşı": studentAge,
+                    "Ders Tarihi": currentDate,
+                    "Kendini Sunma Becerisi": parseInt(document.getElementById("selfPresentation").value) * 10,
+                    "Özgüven": parseInt(document.getElementById("confidence").value) * 10,
+                    "Gözlem": parseInt(document.getElementById("observation").value) * 10,
+                    "Başkalarını Dinleme": parseInt(document.getElementById("listening").value) * 10,
+                    "Uyum Sağlama ve Yaratıcı Düşünme": parseInt(document.getElementById("adaptivity").value) * 10,
+                    "Aktivite": parseInt(document.getElementById("activity").value) * 10
+                };
+
+                // Генерируем HTML для краткой сводки навыков
+                let summaryRows = '';
+                for (let key in results) {
+                    if (key !== "Öğrencinin Adı" && key !== "Öğrencinin Yaşı" && key !== "Ders Tarihi") {
+                        const value = results[key];
+                        let sliderClass = '';
+                        if (value < 50) {
+                            sliderClass = 'slider-low';
+                        } else if (value < 75) {
+                            sliderClass = 'slider-medium';
+                        } else {
+                            sliderClass = 'slider-high';
+                        }
+                        summaryRows += `
+                            <tr>
+                                <td>${key}</td>
+                                <td>${value}%</td>
+                                <td>
+                                    <input type="range" min="0" max="100" value="${value}" disabled class="summary-slider ${sliderClass}" style="--value:${value}%">
+                                </td>
+                            </tr>
+                        `;
+                    }
+                }
+
+                // Функция для генерации строки таблицы навыков
+                function generateSkillRow(skillName, skillValue) {
+                    let explanation = "";
+                    let homeTraining = "";
+
+                    if (skillValue < 50) {
+                        explanation = skillData[skillName].explanations.low;
+                        homeTraining = skillData[skillName].homeTraining.low;
+                    } else if (skillValue < 75) {
+                        explanation = skillData[skillName].explanations.medium;
+                        homeTraining = skillData[skillName].homeTraining.medium;
+                    } else {
+                        explanation = skillData[skillName].explanations.high;
+                        homeTraining = skillData[skillName].homeTraining.high;
+                    }
+
+                    const schoolOffering = skillData[skillName].schoolOffering;
+
+                    let colorClass = skillValue < 50 ? 'low' : skillValue < 75 ? 'medium' : 'high';
+                    return `
+                        <tr>
+                            <td>${skillName}</td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress-fill ${colorClass}" style="width: ${skillValue}%;"></div>
+                                </div>
+                                ${skillValue}%
+                            </td>
+                            <td>${explanation}</td>
+                            <td>${homeTraining}</td>
+                            <td>${schoolOffering}</td>
+                        </tr>
+                    `;
+                }
+
+                // Генерируем подробную таблицу навыков
+                let detailedRows = '';
+                for (let key in results) {
+                    if (key !== "Öğrencinin Adı" && key !== "Öğrencinin Yaşı" && key !== "Ders Tarihi") {
+                        detailedRows += generateSkillRow(key, results[key]);
+                    }
+                }
+
+                // Генерируем страницу с результатами
+                let resultPage = `
+                    <!DOCTYPE html>
+                    <html lang="tr">
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>Değerlendirme sonuçları</title>
+                        <style>
+                            /* Стили перенесены из основного документа */
+                            body {
+                                font-family: Arial, sans-serif;
+                                background-color: #f4f4f4;
+                                margin: 0;
+                                padding: 0;
+                                display: flex;
+                                justify-content: center;
+                                align-items: flex-start;
+                                padding-top: 50px;
+                                min-height: 100vh;
+                            }
+                            .container {
+                                background-color: #fff;
+                                padding: 40px;
+                                border-radius: 10px;
+                                border: 2px solid #5988ff;
+                                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                                width: 90%;
+                                max-width: 1200px;
+                                margin-bottom: 50px;
+                            }
+                            h1 {
+                                text-align: center;
+                                margin-bottom: 20px;
+                                color: #5988ff;
+                            }
+                            .info {
+                                margin-bottom: 20px;
+                                background-color: #d6ff6b;
+                                padding: 15px;
+                                border-radius: 5px;
+                            }
+                            .info p {
+                                margin: 5px 0;
+                            }
+                            .logo {
+                                text-align: center;
+                                margin-bottom: 20px;
+                            }
+                            .logo img {
+                                max-width: 200px;
+                            }
+                            .summary-table, .table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin-top: 20px;
+                            }
+                            .summary-table th, .summary-table td, .table th, .table td {
+                                border: 1px solid #ddd;
+                                padding: 10px;
+                                text-align: left;
+                                vertical-align: top;
+                            }
+                            .summary-table th, .table th {
+                                background-color: #5988ff;
+                                color: white;
+                            }
+                            .summary-slider {
+                                width: 100%;
+                                -webkit-appearance: none;
+                                appearance: none;
+                                height: 8px;
+                                margin-top: 10px;
+                                background-color: #f0f0f0;
+                                border-radius: 5px;
+                                position: relative;
+                            }
+                            .summary-slider::-webkit-slider-thumb {
+                                -webkit-appearance: none;
+                                appearance: none;
+                                width: 16px;
+                                height: 16px;
+                                border-radius: 50%;
+                                background-color: #ffffff;
+                                border: 2px solid #5988ff;
+                                cursor: pointer;
+                                position: relative;
+                                z-index: 1;
+                            }
+                            .summary-slider::-moz-range-thumb {
+                                width: 16px;
+                                height: 16px;
+                                border-radius: 50%;
+                                background-color: #ffffff;
+                                border: 2px solid #5988ff;
+                                cursor: pointer;
+                                position: relative;
+                                z-index: 1;
+                            }
+                            /* Цветовая заливка для слайдера */
+                            .summary-slider.slider-low {
+                                background: linear-gradient(to right, #ff6f61 0%, #ff6f61 var(--value), #f0f0f0 var(--value), #f0f0f0 100%);
+                            }
+                            .summary-slider.slider-medium {
+                                background: linear-gradient(to right, #ffeb3b 0%, #ffeb3b var(--value), #f0f0f0 var(--value), #f0f0f0 100%);
+                            }
+                            .summary-slider.slider-high {
+                                background: linear-gradient(to right, #81c784 0%, #81c784 var(--value), #f0f0f0 var(--value), #f0f0f0 100%);
+                            }
+                            .progress-bar {
+                                height: 20px;
+                                border-radius: 5px;
+                                background-color: #f0f0f0;
+                                /* position: relative; */ /* Удалено */
+                                margin-bottom: 5px;
+                                overflow: hidden; /* Добавлено для предотвращения выхода заполнения за пределы */
+                            }
+                            .progress-fill {
+                                height: 100%;
+                                border-radius: 5px;
+                                /* position: absolute; */ /* Удалено */
+                                width: 0%; /* Установлено по умолчанию */
+                                transition: width 0.5s ease; /* Плавное изменение ширины */
+                            }
+                            .progress-fill.low {
+                                background-color: #ff6f61;
+                            }
+                            .progress-fill.medium {
+                                background-color: #ffeb3b;
+                            }
+                            .progress-fill.high {
+                                background-color: #81c784;
+                            }
+                            @media (max-width: 768px) {
+                                .container {
+                                    padding: 20px;
+                                    width: 95%;
+                                }
+                                .summary-slider {
+                                    height: 6px;
+                                }
+                                .progress-bar {
+                                    height: 15px;
+                                }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <!-- Логотип -->
+                            <div class="logo">
+                                <img src="https://767416.selcdn.ru/production_kodland_main_public/task_description_materials/3936703d-2c80-43e0-b60c-cdd41464393e.png" alt="Kodland_Logo">
+                            </div>
+                            <h1>Tanılamalar</h1>
+                            <div class="info">
+                                <p><strong>Öğrencinin Adı:</strong> ${results["Öğrencinin Adı"]}</p>
+                                <p><strong>Öğrencinin Yaşı:</strong> ${results["Öğrencinin Yaşı"]}</p>
+                                <p><strong>Ders Tarihi:</strong> ${results["Ders Tarihi"]}</p>
+                            </div>
+                            <!-- Краткая сводка навыков -->
+                            <h2>Beceri Özeti</h2>
+                            <table class="summary-table">
+                                <thead>
+                                    <tr>
+                                        <th>Beceri</th>
+                                        <th>Performans Yüzdesi</th>
+                                        <th>Değerlendirme</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${summaryRows}
+                                </tbody>
+                            </table>
+                            <!-- Подробная таблица навыков -->
+                            <h2>Ayrıntılı Rapor</h2>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Değerlendirilen Parametreler</th>
+                                        <th>Gelişim Seviyesi (%)</th>
+                                        <th>Açıklama</th>
+                                        <th>Evde Nasıl Eğitim Verilir</th>
+                                        <th>Teklifimiz</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${detailedRows}
+                                </tbody>
+                            </table>
+                        </div>
+                    </body>
+                    </html>
+                `;
+                const newWindow = window.open();
+                newWindow.document.write(resultPage);
+                newWindow.document.close();
+            });
+        });
+    </script>
+</body>
+</html>
